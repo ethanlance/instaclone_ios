@@ -17,7 +17,8 @@ For the app to work you will need to git clone and install the FB Connect framew
 
 <code>
 git clone git://github.com/facebook/facebook-ios-sdk.git
-
+</code>
+<code>
 cd % ~/facebook-ios-sdk/scripts/build_facebook_ios_sdk_static_lib.sh
 </code>
 
@@ -31,5 +32,5 @@ INSTACLONE_DJANGO:
 Git clone the accompanying django web app I wrote if you want to actually login and upload photos.  
 
 <code>
-git@github.com:ethanlance/instaclone_django.git
+git clone  git@github.com:ethanlance/instaclone_django.git
 </code>

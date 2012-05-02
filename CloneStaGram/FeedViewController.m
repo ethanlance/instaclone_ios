@@ -199,9 +199,10 @@
 
 -(void)submitLike:(NSIndexPath *)tappedRow
 {
-    ImageModel *image = [imageFeedArray objectAtIndex:[tappedRow row]];
+
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];    
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    ImageModel *image = [imageFeedArray objectAtIndex:[tappedRow row]];
     UserModel *user = [appDelegate getUser:[defaults objectForKey:@"USER_PROFILE_ID"]];    
     
     UITableViewCell * cell = [self.tableView cellForRowAtIndexPath:tappedRow];
@@ -231,9 +232,11 @@
                             user_profile_uri, @"user_profile",
                             nil];
     
+    NSString *path = [NSString stringWithFormat:@"%@%@", LIKE_URL, [defaults objectForKey:@"API_KEY_STRING"]];
+    
     NSURL *url = [NSURL URLWithString:BASE_URL];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];    
-    NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST" path:LIKE_URL parameters:params];
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST" path:path parameters:params];
 
     //I'm not doing something right with AFJSONRequestOperation, the web app wants json request, I don't think I should have to send the json this way.  Fix this.
     NSError *error = nil;

@@ -103,9 +103,7 @@
     [defaults setObject:[facebook accessToken] forKey:@"FBAccessTokenKey"];
     [defaults setObject:[facebook expirationDate] forKey:@"FBExpirationDateKey"];
     [defaults synchronize];
-    
-    [delegate importUsersFollowers:[defaults objectForKey:@"USER_PROFILE_ID"]];
-    
+        
     //We have FB credentials now.  Get some FB details about this user.  Then go to (void)request: callback.
     [facebook requestWithGraphPath:@"me" andDelegate:self];
 }
@@ -221,7 +219,10 @@
 - (void)userIsLoggedIn{
     self.setLogOut = FALSE;
     
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+
+    [delegate importUsersFollowers:[defaults objectForKey:@"USER_PROFILE_ID"]];
     delegate.window.rootViewController = delegate.appViewController;
 }
 

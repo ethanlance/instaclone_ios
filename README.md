@@ -1,10 +1,7 @@
-Why instaclone_ios?
+instaclone_ios
 ==================
+This iOS 5 sample app clones the basic functionality of Instagram (sans camera filters and geo tagging). It uses storyboards and ARC (automatic reference counting).  
 
-So I wanted to learn iOS / objective-c.  I decided why not use Instagram as my muse?  Except for the camera filters and geo tagging, I cloned most of the basic flow af that app. My goal was to understand how views, api calls, core-data and basic objective-c syntax works.  
-This is not meant to be a finished product and I don't claim this code to be any good.  
-
-Also, instaclone_ios uses storyboards and ARC.  Only works on iOS 5.
 
 
 Also Install:

@@ -15,8 +15,10 @@ FACEBOOK CONNECT:
 
 For the app to work you will need to git clone and install the FB Connect framework. Here's how:
 
+<code>
 git clone git://github.com/facebook/facebook-ios-sdk.git
 cd % ~/facebook-ios-sdk/scripts/build_facebook_ios_sdk_static_lib.sh
+</code>
 This will create the static library under the <PROJECT_HOME>/lib/facebook-ios-sdk folder (e.g. ~/facebook-ios-sdk/lib/facebook-ios-sdk). You may then drag the facebook-ios-sdk folder into the app Xcode project to include the iOS Facebook SDK static library.
 
 More info on this here https://developers.facebook.com/docs/mobile/ios/build/

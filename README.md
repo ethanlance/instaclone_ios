@@ -7,13 +7,13 @@ This is not meant to be a finished product and I don't claim this code to be any
 Also, instaclone_ios uses storyboards and ARC.  Only works on iOS 5.
 
 
-Other things to install:
+Also Install:
 ========================
 
 
-FACEBOOK CONNECT:
-
-For the app to work you will need to git clone and install the FB Connect framework. Here's how:
+Facebook SDK
+------------
+First thing the app does on launch is present you with a login screen.  It needs to authenticate you with Facebook.  Once authenticated the app sends data to the Web App ( see below ) and the web app creates you and/or logs you in.
 
 <code>
 git clone git://github.com/facebook/facebook-ios-sdk.git
@@ -27,7 +27,8 @@ This will create the static library under the <PROJECT_HOME>/lib/facebook-ios-sd
 More info on this here https://developers.facebook.com/docs/mobile/ios/build/
 
 
-INSTACLONE_DJANGO:
+Django Web App
+--------------
 
 Git clone the accompanying django web app I wrote if you want to actually login and upload photos.  
 

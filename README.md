@@ -30,7 +30,7 @@ More info on this here https://developers.facebook.com/docs/mobile/ios/build/
 Django Web App
 --------------
 
-Git clone the accompanying django web app I wrote if you want to actually login and upload photos.  
+Git clone the accompanying django web app I wrote if you want to actually login and upload photos.  Read more about the web app here: https://github.com/ethanlance/instaclone_django/blob/master/README.md
 
 <code>
 git clone  git@github.com:ethanlance/instaclone_django.git

@@ -12,15 +12,13 @@
 //#define BASE_URL @"http://instaclone.herokuapp.com/"
 #define BASE_URL @"http://lancebook.local:8000/"
 
-#define IMAGEFEED_URL_FOR_USER_AND_FOLLOWING @"api/v1/image/?format=json&followers=1&user_profile_id="
+#define IMAGEFEED_URL_FOR_USER @"api/v1/image/"
 
-#define IMAGEFEED_URL_FOR_USER @"api/v1/image/?format=json&user_profile_id="
-
-#define IMAGEFEED_URL_FOR_POPULAR @"api/v1/popular/?format=json"
+#define IMAGEFEED_URL_FOR_POPULAR @"api/v1/popular/"
 
 #define LIKE_URL @"api/v1/like/"
 
-#define NEWS_URL @"api/v1/news/?format=json&user_profile_id="
+#define NEWS_URL @"api/v1/news/"
 
 #define FOLLOWING_URL @"api/v1/following/"
 

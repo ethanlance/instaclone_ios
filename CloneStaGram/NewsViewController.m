@@ -252,52 +252,55 @@
     
     NSArray *JObjects = [JSON valueForKey:@"objects"];
     
-    NSSet * userProfiles = [NSSet setWithArray:[JObjects valueForKey:@"user_profile"]];
-    [appDelegate importUserProfiles:userProfiles];    
+    if( [JObjects count] > 0){
     
-    NSError *error;
-    int c = [JObjects count];
-    for (int i = 0; i < c; i++){     
-    
-        NSDictionary *dict = [JObjects objectAtIndex:i];
+        NSSet * userProfiles = [NSSet setWithArray:[JObjects valueForKey:@"user_profile"]];
+        [appDelegate importUserProfiles:userProfiles];    
         
-        NSLog(@"DICT %@", dict);
+        NSError *error;
+        int c = [JObjects count];
+        for (int i = 0; i < c; i++){     
         
-        if( dict ){
+            NSDictionary *dict = [JObjects objectAtIndex:i];
             
-            NSLog(@"IMAGE %@", [dict valueForKey:@"image"]);
+            NSLog(@"DICT %@", dict);
             
-            NSString *image_id = [self uriToId:[dict valueForKeyPath:@"image"]];
-            NSString *user_profile_id = [self uriToId:[dict valueForKeyPath:@"user_profile"]];
-            NSString * like_id = [dict valueForKeyPath:@"id"];
-            
-            NSObject *obj = [self getNews:like_id];
-             
-            
-            //If this image_id is not found in our data, then save it:
-            if( obj == nil ){
+            if( dict ){
                 
-                //Setup insert:
-                NewsModel *newsModel = (NewsModel *)[NSEntityDescription insertNewObjectForEntityForName:@"NewsModel" inManagedObjectContext:self.context];
+                NSLog(@"IMAGE %@", [dict valueForKey:@"image"]);
                 
-                //Date
-                NSString *mydate = [dict valueForKeyPath:@"datetime"];
-                NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init]; 
-                [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSSSS"];
+                NSString *image_id = [self uriToId:[dict valueForKeyPath:@"image"]];
+                NSString *user_profile_id = [self uriToId:[dict valueForKeyPath:@"user_profile"]];
+                NSString * like_id = [dict valueForKeyPath:@"id"];
                 
-                [newsModel setValue:image_id forKey:@"image_id"];
-                [newsModel setValue:like_id forKey:@"like_id"];            
-                [newsModel setValue:[dateFormatter dateFromString:mydate] forKey:@"datetime"];
-                [newsModel setValue:user_profile_id forKey:@"user_profile_id"];
+                NSObject *obj = [self getNews:like_id];
+                 
                 
-                //Save
-                if (![self.context save:&error]) {
-                    NSLog(@"Whoops, couldn't save: %@", [error localizedDescription]);
+                //If this image_id is not found in our data, then save it:
+                if( obj == nil ){
+                    
+                    //Setup insert:
+                    NewsModel *newsModel = (NewsModel *)[NSEntityDescription insertNewObjectForEntityForName:@"NewsModel" inManagedObjectContext:self.context];
+                    
+                    //Date
+                    NSString *mydate = [dict valueForKeyPath:@"datetime"];
+                    NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init]; 
+                    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSSSS"];
+                    
+                    [newsModel setValue:image_id forKey:@"image_id"];
+                    [newsModel setValue:like_id forKey:@"like_id"];            
+                    [newsModel setValue:[dateFormatter dateFromString:mydate] forKey:@"datetime"];
+                    [newsModel setValue:user_profile_id forKey:@"user_profile_id"];
+                    
+                    //Save
+                    if (![self.context save:&error]) {
+                        NSLog(@"Whoops, couldn't save: %@", [error localizedDescription]);
+                    }
                 }
             }
         }
+        [self reloadTable];
     }
-    [self reloadTable];
 }
 
 - (void)reloadTable
@@ -338,7 +341,7 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString * USER_PROFILE_ID = [defaults objectForKey:@"USER_PROFILE_ID"];
     
-    NSString * urlString = [NSString stringWithFormat:@"%@%@%@", BASE_URL, NEWS_URL, USER_PROFILE_ID];
+    NSString * urlString = [NSString stringWithFormat:@"%@%@%@&user_profile_id=%@", BASE_URL, NEWS_URL, [defaults objectForKey:@"API_KEY_STRING"], USER_PROFILE_ID];
     NSURL *url = [NSURL URLWithString:urlString];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];    
     

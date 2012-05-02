@@ -182,12 +182,13 @@
 
 - (void)loadPopularFeed
 {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString * urlString = @"";
     
     if( self.userProfileToLoad ){
-        urlString = [NSString stringWithFormat:@"%@%@%@", BASE_URL, IMAGEFEED_URL_FOR_USER, self.userProfileToLoad]; 
+        urlString = [NSString stringWithFormat:@"%@%@%@&user_profile_id=%@", BASE_URL, IMAGEFEED_URL_FOR_USER, [defaults objectForKey:@"API_KEY_STRING"], self.userProfileToLoad]; 
     }else{
-        urlString = [NSString stringWithFormat:@"%@%@", BASE_URL, IMAGEFEED_URL_FOR_POPULAR ];
+        urlString = [NSString stringWithFormat:@"%@%@%@", BASE_URL, IMAGEFEED_URL_FOR_POPULAR, [defaults objectForKey:@"API_KEY_STRING"] ];
     }
     
     NSURL *url = [NSURL URLWithString:urlString];

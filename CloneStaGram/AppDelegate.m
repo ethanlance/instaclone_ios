@@ -57,9 +57,6 @@
     UIStoryboard *myStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil];
     appViewController = (UITabBarController *)[myStoryboard instantiateViewControllerWithIdentifier:@"tabBarController"];
     
-
-    //Who does this user follow.
-    [self importUsersFollowers:[defaults objectForKey:@"USER_PROFILE_ID"]];
     
     return YES;
 }
@@ -249,6 +246,8 @@
 */
 -(void) importUserProfiles:(NSSet *)userprofiles{
 
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];    
+    
     //userprofiles is set of strings like "/api/v1/user_profile/1/"
     NSString *ids = @"";
     for(id url in userprofiles){
@@ -259,7 +258,7 @@
     ids = [ids substringToIndex:[ids length]-1];
     
     //Now request data from web app:
-    NSString * urlString = [NSString stringWithFormat:@"%@api/v1/user_profile/set/%@/?format=json", BASE_URL, ids];
+    NSString * urlString = [NSString stringWithFormat:@"%@api/v1/user_profile/set/%@/%@", BASE_URL, ids, [defaults objectForKey:@"API_KEY_STRING"]];
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlString]];    
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {        
         //NSLog(@"%@", JSON);
@@ -308,55 +307,56 @@
 {
     
     NSArray *JObjects = [JSON valueForKey:@"objects"];
-    //NSLog(@"%@", JObjects);
     
-    
-    //Take all the user_profiles out and then import data on those ones we don't have in UserModel.
-    NSSet * userProfiles = [NSSet setWithArray:[JObjects valueForKey:@"user_profile"]];
-    [self importUserProfiles:userProfiles];
-    
-    
-    NSError *error;
-    bool reload = false;
-    for (int i = 0; i < [JObjects count]; i++){
+    if([JObjects count] > 0 ){
+
+        //Take all the user_profiles out and then import data on those ones we don't have in UserModel.
+        NSSet * userProfiles = [NSSet setWithArray:[JObjects valueForKey:@"user_profile"]];
+        [self importUserProfiles:userProfiles];
         
-        NSDictionary *dict = [JObjects objectAtIndex:i];
         
-        NSString *image_id = [dict valueForKeyPath:@"id"];
-        
-        // Do we have this image?  If not then save it.
-        NSObject *obj = [self getImage:image_id];
-        if( obj == nil ){
-            reload = true;
+        NSError *error;
+        bool reload = false;
+        for (int i = 0; i < [JObjects count]; i++){
             
-            //Setup insert:
-            ImageModel *im = (ImageModel *)[NSEntityDescription insertNewObjectForEntityForName:@"ImageModel" inManagedObjectContext:[(AppDelegate*)[UIApplication sharedApplication].delegate managedObjectContext]];
+            NSDictionary *dict = [JObjects objectAtIndex:i];
             
-            //Save the image to the local Doc Directory
-            NSString *local_image_url = [self saveRemoteFile:[dict valueForKeyPath:@"image"]];            
+            NSString *image_id = [dict valueForKeyPath:@"id"];
             
-            //Date
-            NSString *mydate = [dict valueForKeyPath:@"datetime"];
-            NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init]; 
-            [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSSSS"];
-            
-            NSString * user_profile_id  = [self getUserProfileIdFromUserResourceUri:[dict valueForKeyPath:@"user_profile"]];
-            
-            [im setValue:image_id forKey:@"image_id"];
-            [im setValue:user_profile_id forKey:@"user_profile_id"];
-            
-            [im setValue:local_image_url forKey:@"image_url"];            
-            [im setValue:[dateFormatter dateFromString:mydate] forKey:@"datetime"];
-            [im setValue:[dict valueForKeyPath:@"like_count"] forKey:@"like_count"];
-            [im setValue:[dict valueForKeyPath:@"comment_count"] forKey:@"comment_count"];
-            
-            
-            //Save
-            if (![self.managedObjectContext save:&error]) {
-                NSLog(@"Whoops, couldn't save: %@", [error localizedDescription]);
+            // Do we have this image?  If not then save it.
+            NSObject *obj = [self getImage:image_id];
+            if( obj == nil ){
+                reload = true;
+                
+                //Setup insert:
+                ImageModel *im = (ImageModel *)[NSEntityDescription insertNewObjectForEntityForName:@"ImageModel" inManagedObjectContext:[(AppDelegate*)[UIApplication sharedApplication].delegate managedObjectContext]];
+                
+                //Save the image to the local Doc Directory
+                NSString *local_image_url = [self saveRemoteFile:[dict valueForKeyPath:@"image"]];            
+                
+                //Date
+                NSString *mydate = [dict valueForKeyPath:@"datetime"];
+                NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init]; 
+                [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSSSS"];
+                
+                NSString * user_profile_id  = [self getUserProfileIdFromUserResourceUri:[dict valueForKeyPath:@"user_profile"]];
+                
+                [im setValue:image_id forKey:@"image_id"];
+                [im setValue:user_profile_id forKey:@"user_profile_id"];
+                
+                [im setValue:local_image_url forKey:@"image_url"];            
+                [im setValue:[dateFormatter dateFromString:mydate] forKey:@"datetime"];
+                [im setValue:[dict valueForKeyPath:@"like_count"] forKey:@"like_count"];
+                [im setValue:[dict valueForKeyPath:@"comment_count"] forKey:@"comment_count"];
+                
+                
+                //Save
+                if (![self.managedObjectContext save:&error]) {
+                    NSLog(@"Whoops, couldn't save: %@", [error localizedDescription]);
+                }
             }
         }
-    }
+    }  
 }
 
 - (NSString *) getUserProfileIdFromUserResourceUri:(NSString *)user_resource_uri
@@ -368,8 +368,10 @@
 
 - (void) importUsersFollowers:(NSString *)user_profile_id
 {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
     //Now request data from web app:
-    NSString * urlString = [NSString stringWithFormat:@"%@%@?follower=%@", BASE_URL, FOLLOWING_URL, user_profile_id];
+    NSString * urlString = [NSString stringWithFormat:@"%@%@%@&follower=%@", BASE_URL, FOLLOWING_URL, [defaults objectForKey:@"API_KEY_STRING"], user_profile_id];
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlString]];    
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {        
         //NSLog(@"%@", JSON);

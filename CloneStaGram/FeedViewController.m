@@ -162,15 +162,15 @@
 
 - (void)loadImageFeed
 {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString * USER_PROFILE_ID = @"";
     NSString * urlString = @"";
     
     if( self.userProfileToLoad ){ 
-        urlString = [NSString stringWithFormat:@"%@%@%@", BASE_URL, IMAGEFEED_URL_FOR_USER, self.userProfileToLoad];    
+        urlString = [NSString stringWithFormat:@"%@%@%@&user_profile_id=%@", BASE_URL, IMAGEFEED_URL_FOR_USER, [defaults objectForKey:@"API_KEY_STRING"], self.userProfileToLoad];    
     }else{
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         USER_PROFILE_ID = [defaults objectForKey:@"USER_PROFILE_ID"];
-        urlString = [NSString stringWithFormat:@"%@%@%@", BASE_URL, IMAGEFEED_URL_FOR_USER_AND_FOLLOWING, USER_PROFILE_ID];
+        urlString = [NSString stringWithFormat:@"%@%@%@&followers=1&user_profile_id=%@", BASE_URL, IMAGEFEED_URL_FOR_USER, [defaults objectForKey:@"API_KEY_STRING"], USER_PROFILE_ID];
     }
     
     NSURL *url = [NSURL URLWithString:urlString];

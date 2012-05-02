@@ -104,6 +104,8 @@
     [defaults setObject:[facebook expirationDate] forKey:@"FBExpirationDateKey"];
     [defaults synchronize];
     
+    [delegate importUsersFollowers:[defaults objectForKey:@"USER_PROFILE_ID"]];
+    
     //We have FB credentials now.  Get some FB details about this user.  Then go to (void)request: callback.
     [facebook requestWithGraphPath:@"me" andDelegate:self];
 }
@@ -168,7 +170,7 @@
                             nil];
     
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST" path:@"/login_or_signup/" parameters:params];
-    
+    NSLog(@"PARAMS %@", params);
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         
         NSLog(@"RESPONSE %@", response);
@@ -179,15 +181,21 @@
         NSString * user_profile_id = [dict valueForKey:@"user_profile_id"];
         NSString * username = [dict valueForKey:@"username"];
         
+        NSString * api_key = [dict valueForKey:@"api_key"];
+        NSString * api_username = [dict valueForKey:@"api_username"];
+        NSString * api_key_string = [NSString stringWithFormat:@"?format=json&username=%@&api_key=%@", api_username, api_key ];
          
         [[NSUserDefaults standardUserDefaults] setObject:fbid forKey:@"FBID"];
         [[NSUserDefaults standardUserDefaults] setObject:username forKey:@"USERNAME"];
         [[NSUserDefaults standardUserDefaults] setObject:user_profile_id forKey:@"USER_PROFILE_ID"];
+        [[NSUserDefaults standardUserDefaults] setObject:api_key_string forKey:@"API_KEY_STRING"];
                 
         [self userIsLoggedIn];
         
+        
     }failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
         // your failure code here
+        //NSLog(@"FAILED %@", JSON);
     }];
     [operation start];
     

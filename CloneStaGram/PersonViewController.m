@@ -213,8 +213,8 @@
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
-    NSString * follower_uri = [NSString stringWithFormat:@"/api/v1/user_profile/%@/", [defaults objectForKey:@"USER_PROFILE_ID"]];
-    NSString * following_uri = [NSString stringWithFormat:@"/api/v1/user_profile/%@/", self.userProfileToLoad];
+    NSString * follower_uri = [NSString stringWithFormat:@"/api/v1/user_profile/%@/%@", [defaults objectForKey:@"USER_PROFILE_ID"], [defaults objectForKey:@"API_KEY_STRING"]];
+    NSString * following_uri = [NSString stringWithFormat:@"/api/v1/user_profile/%@/%@", self.userProfileToLoad, [defaults objectForKey:@"API_KEY_STRING"]];
     
     
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:

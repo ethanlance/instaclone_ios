@@ -17,6 +17,7 @@
 - (IBAction)handleLikeTap:(id)sender;
 //- (IBAction)clickLike:(id)sender;
 - (void)loadImageFeed;
+- (void)loadImageModel;
 - (void)reloadTable;
 - (void)setReloadButton;
 - (void)showReloadButton;

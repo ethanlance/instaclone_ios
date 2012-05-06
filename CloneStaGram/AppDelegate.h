@@ -42,5 +42,6 @@
 - (void) importImageFeedData:(NSArray *)JSON;
 - (void) importUsersFollowers:(NSString *)user_profile_id;
 - (NSString *) getUserProfileIdFromUserResourceUri:(NSString *)user_resource_uri;
+- (NSString *)saveRemoteFile:(NSString *)image_url;
 
 @end
